@@ -1,1 +1,1 @@
-# chain-grant
+# ChainGrant
