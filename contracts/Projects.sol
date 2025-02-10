@@ -2,7 +2,7 @@
 pragma solidity ^0.8.9;
 import "./validator.sol";  
 
-contract Projects {
+contract ProjectSelector {
     ValidatorRegistry public validatorRegistry;
 
     struct validatorChoices {
