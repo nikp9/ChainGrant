@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-import "./projectselector.sol";
-import "./validator.sol";
+import "./Project.sol";
+import "./Validator.sol";
 
 contract Fund_tracking {
     Admin public adminContract;
