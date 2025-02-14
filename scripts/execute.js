@@ -26,10 +26,10 @@ async function main() {
         nonce: nonce,
         initCode: "0x",
         callData: functionCallData,
-        callGasLimit: 200_000,
-        verificationGasLimit: 200_000,
+        callGasLimit: 100_000,
+        verificationGasLimit: 100_000,
         preVerificationGas: 50_000,
-        maxFeePerGas: hre.ethers.parseUnits("10", "gwei"),
+        maxFeePerGas: hre.ethers.parseUnits("20", "gwei"),
         maxPriorityFeePerGas: hre.ethers.parseUnits("5", "gwei"),
         paymasterAndData: Paymaster.target,
         signature: "0x"
