@@ -3,7 +3,7 @@ pragma solidity ^0.8.0;
 
 import "./Projects.sol";
 import "./validator.sol";
-
+import "./Admin.sol";
 contract MilestoneTracker {
     ProjectSelector public projectSelector;
     ValidatorRegistry public validatorRegistry;

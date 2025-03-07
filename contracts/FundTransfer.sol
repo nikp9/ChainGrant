@@ -3,6 +3,7 @@ pragma solidity ^0.8.9;
 
 import "./Projects.sol";
 import "./validator.sol";
+import "./Admin.sol";
 
 contract Fund_tracking {
     Admin public adminContract;
