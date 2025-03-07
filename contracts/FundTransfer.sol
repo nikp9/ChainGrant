@@ -29,7 +29,7 @@ contract Fund_tracking {
     }
     
     modifier validProject(uint256 projectId) {
-        (uint8 status, , , ,) = projectSelector.idToProjectDetails(projectId);
+        (uint8 status, , , ) = projectSelector.idToProjectDetails(projectId);
         require(status != 0, "Project does not exist");
         _;
     }
@@ -38,7 +38,7 @@ contract Fund_tracking {
         validProject(_id) 
         onlyVerifiedValidator(v_id) 
     {
-        (, , , uint256 Total_fund_req, ) = projectSelector.idToProjectDetails(_id);
+        (, ,  uint256 Total_fund_req, ) = projectSelector.idToProjectDetails(_id);
         require(Total_fund_req >= New_funds_transfered, "Amount Greater");
         
         // Initialize the array if it hasn't been initialized yet
