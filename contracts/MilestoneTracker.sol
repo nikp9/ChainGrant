@@ -7,6 +7,7 @@ import "./validator.sol";
 contract MilestoneTracker {
     ProjectSelector public projectSelector;
     ValidatorRegistry public validatorRegistry;
+    Admin public adminContract;
     
     struct MilestoneStatus {
         uint8 isCompleted;
@@ -21,9 +22,10 @@ contract MilestoneTracker {
     
     mapping(uint256 => ProjectMilestones) public projects;
     
-    constructor(address _projectSelectorAddress, address _validatorRegistryAddress) {
+    constructor(address _projectSelectorAddress, address _validatorRegistryAddress, address _adminAddress) {
         projectSelector = ProjectSelector(_projectSelectorAddress);
         validatorRegistry = ValidatorRegistry(_validatorRegistryAddress);
+        adminContract = Admin(_adminAddress);
     }
     
     modifier onlyVerifiedValidator(uint256 validatorId) {
@@ -33,7 +35,7 @@ contract MilestoneTracker {
     }
     
     modifier validProject(uint256 projectId) {
-        (uint8 status, , uint8 totalMilestones, ,) = projectSelector.idToProjectDetails(projectId);
+        (uint8 status, , ,) = projectSelector.idToProjectDetails(projectId);
         require(status != 0, "Project does not exist");
         _;
     }
@@ -46,11 +48,8 @@ contract MilestoneTracker {
     ) public 
         onlyVerifiedValidator(validatorId)
         validProject(projectId) 
-    {
-        // Get total milestones for the project
-        (, , uint8 totalMilestones, ,) = projectSelector.idToProjectDetails(projectId);
-        
-        require(milestoneNumber < totalMilestones, "Invalid milestone number");
+    {    
+        require(milestoneNumber < adminContract.Total_milestone(), "Invalid milestone number");
         require(status == 0 || status == 1, "Invalid status");
         
         // If marking as complete, store completion date
@@ -63,20 +62,20 @@ contract MilestoneTracker {
     
     
     function getMilestoneDetails(uint256 projectId) public view 
-        validProject(projectId)
-        returns (uint[] memory completionDates, uint8[] memory statuses) 
-    {
-        // Get total milestones for the project
-        (, , uint8 totalMilestones, ,) = projectSelector.idToProjectDetails(projectId);
-        
-        completionDates = new uint[](totalMilestones);
-        statuses = new uint8[](totalMilestones);
-        
-        for (uint8 i = 0; i < totalMilestones; i++) {
-            completionDates[i] = projects[projectId].milestoneStatuses[i].completionDate;
-            statuses[i] = projects[projectId].milestoneStatuses[i].isCompleted;
-        }
-        
-        return (completionDates, statuses);
+    validProject(projectId)
+    returns (uint[] memory completionDates, uint8[] memory statuses) 
+{
+    // Get total milestones from admin contract
+    uint256 totalMilestones = adminContract.Total_milestone();
+    
+    completionDates = new uint[](totalMilestones);
+    statuses = new uint8[](totalMilestones);
+    
+    for (uint8 i = 0; i < totalMilestones; i++) {
+        completionDates[i] = projects[projectId].milestoneStatuses[i].completionDate;
+        statuses[i] = projects[projectId].milestoneStatuses[i].isCompleted;
     }
+    
+    return (completionDates, statuses);
+}
 }
