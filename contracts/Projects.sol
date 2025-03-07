@@ -13,7 +13,6 @@ contract ProjectSelector {
     struct projectDetails {
         uint8 status; // Status Codes {0: Does not exist, 1: Exists, 2: Atleast 5 validators have validated}
         uint16 score;
-        uint8 mile_stone;
         uint256 Total_fund_req;
         validatorChoices[5] validatorScores;
         uint8 numberOfValidators;
@@ -26,10 +25,9 @@ contract ProjectSelector {
         validatorRegistry = ValidatorRegistry(_validatorRegistryAddress);
     }
 
-    function addProjectDetails(uint256 _id,uint8 milestone,uint256 Total_fund ) public {
+    function addProjectDetails(uint256 _id,uint256 Total_fund ) public {
         ids.push(_id);
         idToProjectDetails[_id].status = 1;
-        idToProjectDetails[_id].mile_stone = milestone;
         idToProjectDetails[_id].Total_fund_req = Total_fund;
         idToProjectDetails[_id].score = 0;
         idToProjectDetails[_id].numberOfValidators = 0;
