@@ -10,6 +10,7 @@ contract ValidatorRegistry {
         uint256 id;
         uint256 R_id;
         uint8 verificationStatus; // 0: pending, 1: verified
+        uint8 admin_count ;
         bytes32 validatorHash;
     }
     
@@ -32,13 +33,20 @@ contract ValidatorRegistry {
         validators[validatorCount].verificationStatus = 0;  // Default to pending
         validators[validatorCount].validatorHash = 0;
     }
-    
+
     function updateValidatorStatus(uint256 _id, uint8 _status) public onlyAdmin {
         require(_id > 0 && _id <= validatorCount, "Invalid id");
         require(_status == 0 || _status == 1, "Invalid status");
         
         ValidatorDetails storage v = validators[_id];
-        v.verificationStatus = _status;
+        if(_status==1)
+        {
+            v.admin_count++;
+        }       
+        if(v.admin_count==5)
+        {
+            v.verificationStatus = _status;
+        }
     }
     
     function getValidatorDetails(uint256 _id) public view returns (uint256,uint256, uint8) {
