@@ -8,6 +8,7 @@ contract ValidatorRegistry {
     
     struct ValidatorDetails {
         uint256 id;
+        uint256 R_id;
         uint8 verificationStatus; // 0: pending, 1: verified
         bytes32 validatorHash;
     }
@@ -24,9 +25,10 @@ contract ValidatorRegistry {
         _;
     }
     
-    function addValidator(uint256 _id) public {
+    function addValidator(uint256 _id,uint256 R1_id) public {
         validatorCount++;
         validators[validatorCount].id = _id;
+        validators[validatorCount].R_id =R1_id;
         validators[validatorCount].verificationStatus = 0;  // Default to pending
         validators[validatorCount].validatorHash = 0;
     }
@@ -39,9 +41,9 @@ contract ValidatorRegistry {
         v.verificationStatus = _status;
     }
     
-    function getValidatorDetails(uint256 _id) public view returns (uint256, uint8) {
+    function getValidatorDetails(uint256 _id) public view returns (uint256,uint256, uint8) {
         require(_id > 0 && _id <= validatorCount, "Invalid id");
         ValidatorDetails storage v = validators[_id];
-        return (v.id, v.verificationStatus);
+        return (v.id,v.R_id, v.verificationStatus);
     }
 }
