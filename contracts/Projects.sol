@@ -64,7 +64,7 @@ contract ProjectTracker {
 
         (, uint256 researchArea, uint8 verificationStatus) = validatorContract.getValidatorDetails(_validatorId); // Validator id is address msg.sender == _validatorId
         require(researchArea == projectDetails[_id].researchArea && verificationStatus == 1); // Check if the research area and the validator is verified
-        // Validator id check validatorContract.validators[msg.sender].status == 1
+        // Validator id check validatorContract.validators(msg.sender).status == 1
         
         details.score += _score;
         details.validatorScores[details.totalValidations] = validatorChoices(_validatorId, _choices);
