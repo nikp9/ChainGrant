@@ -1,19 +1,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
-// import "./validator.sol";
-
-interface IValidator{
-    function updateValidatorStatus(uint256 _id, uint8 _status) external;
-    function getValidatorDetails(uint256 _id) external view returns (uint256,uint256,uint8);
-}
-
-interface IAdmin {
-    function getResearchMilestones(uint256 _id) external view returns (uint256);
-}
+import "./interfaces/IAdmin.sol";
+import "./interfaces/IValidator.sol";
 
 contract ProjectTracker {
     IValidator public validatorContract;
-    Admin public adminContract;
+    IAdmin public adminContract;
     
     struct validatorChoices {
         uint256 validatorId;
@@ -35,13 +27,13 @@ contract ProjectTracker {
 
     constructor(address _validatorContractAddress, address _adminContractAddress) {
         validatorContract = IValidator(_validatorContractAddress);
-        adminContract = Admin(_adminContractAddress);
+        adminContract = IAdmin(_adminContractAddress);
     }
 
     function addProjectDetails(uint256 _id, uint256 _budgetEstimate, uint256 _researchArea) public {
         ids.push(_id);
         idToProjectDetails[_id].status = 1;
-        idToProjectDetails[_id].researchArea = researchArea;
+        idToProjectDetails[_id].researchArea = _researchArea;
         idToProjectDetails[_id].budgetEstimate = _budgetEstimate;
         idToProjectDetails[_id].score = 0;
         idToProjectDetails[_id].milestone = 0;
@@ -57,13 +49,13 @@ contract ProjectTracker {
         projectDetails storage details = idToProjectDetails[_id];
 
         for (uint8 i = 0; i<5; i++){
-            if (details.validatorId == _validatorId){
+            if (details.validatorScores[i].validatorId == _validatorId){
                 revert("The validator has already scored this project");
             }
         }
 
         (, uint256 researchArea, uint8 verificationStatus) = validatorContract.getValidatorDetails(_validatorId); // Validator id is address msg.sender == _validatorId
-        require(researchArea == projectDetails[_id].researchArea && verificationStatus == 1); // Check if the research area and the validator is verified
+        require(researchArea == details.researchArea && verificationStatus == 1); // Check if the research area and the validator is verified
         // Validator id check validatorContract.validators(msg.sender).status == 1
         
         details.score += _score;
