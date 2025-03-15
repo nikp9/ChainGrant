@@ -77,9 +77,4 @@ contract Validator is IValidator {
         ValidatorDetails storage validator = validators[_id];
         return (validator.id,validator.researchArea, validator.verificationStatus);
     }
-
-    function getValidatorAdminCount(uint256 _id) public view returns (uint8) {
-        ValidatorDetails storage validator = validators[_id];
-        return (validator.adminCount);
-    }
 }
