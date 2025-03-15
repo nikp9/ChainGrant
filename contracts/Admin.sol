@@ -1,21 +1,22 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
-// Simple admin management contract
-contract Admin {
+import "./interfaces/IAdmin.sol";
+
+contract Admin is IAdmin {
     // Super admin address - cannot be changed after deployment
     address public immutable admin;
     
-    uint256[] public Research_ids;
+    uint256[] public researchArea;
     
     // Struct to store research details
-    struct Research {
+    struct researchDetails {
         uint256 id;
         uint8 totalMilestones;
         bool exists;
     }
     
     // Mapping to store research details by ID
-    mapping(uint256 => Research) public researches;
+    mapping(uint256 => researchDetails) public researches;
    
     // Tracks admin status: 0 = not admin, 1 = admin
     mapping(address => uint8) public admins;
@@ -28,36 +29,28 @@ contract Admin {
 
     // Add a new research with ID and name
     function addResearch(uint256 _id, uint8 _totalMilestones) public {
-        require(isAdmin(msg.sender), "Only admins can add research");
+        require(isAdmin(msg.sender), "Only admins can add new research areas");
         require(!researches[_id].exists, "Research ID already exists");
         
-        researches[_id] = Research(_id, _totalMilestones, true);
-        Research_ids.push(_id);
-    }
-    
-    // Update total milestones for a specific research
-    function updateResearchMilestones(uint256 _id, uint8 _totalMilestones) public {
-        require(isAdmin(msg.sender), "Only admins can update research");
-        require(researches[_id].exists, "Research ID does not exist");
-        
-        researches[_id].totalMilestones = _totalMilestones;
+        researches[_id] = researchDetails(_id, _totalMilestones, true);
+        researchArea.push(_id);
     }
     
     
   // Get research total milestones by ID
-    function getResearchMilestones(uint256 _id) public view returns (uint256) {
+    function getResearchMilestones(uint256 _id) external view override returns (uint256) {
         require(researches[_id].exists, "Research ID does not exist");
         return researches[_id].totalMilestones;
     }
     
     // Get all research IDs
     function getAllResearchIds() public view returns (uint256[] memory) {
-        return Research_ids;
+        return researchArea;
     }
     
     // Get research count
     function getResearchCount() public view returns (uint256) {
-        return Research_ids.length;
+        return researchArea.length;
     }
 
     // Allows super admin to add new admins
