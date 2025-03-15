@@ -6,6 +6,7 @@ import "./interfaces/IValidator.sol";
 contract Projects {
     IValidator public validatorContract;
     IAdmin public adminContract;
+    address public milestoneContractAddress;
     
     struct validatorChoices {
         uint256 validatorId;
@@ -20,14 +21,17 @@ contract Projects {
         validatorChoices[5] validatorScores; // Each validator that have scored this project
         uint8 totalValidations;
         uint256 researchArea;
+        uint256 fundsReceived;
+        uint256 additionalFundsReceived;
     }
 
     mapping (uint => projectDetails) public idToProjectDetails;
     uint256[] public ids;
 
-    constructor(address _validatorContractAddress, address _adminContractAddress) {
+    constructor(address _validatorContractAddress, address _adminContractAddress, address _milestoneContractAddress) {
         validatorContract = IValidator(_validatorContractAddress);
         adminContract = IAdmin(_adminContractAddress);
+        milestoneContractAddress = _milestoneContractAddress;
     }
 
     function addProjectDetails(uint256 _id, uint256 _budgetEstimate, uint256 _researchArea) public {
@@ -38,6 +42,8 @@ contract Projects {
         idToProjectDetails[_id].score = 0;
         idToProjectDetails[_id].milestone = 0;
         idToProjectDetails[_id].totalValidations = 0;
+        idToProjectDetails[_id].fundsReceived = 0;
+        idToProjectDetails[_id].additionalFundsReceived = 0;
 
         uint8 totalMilestones = uint8(adminContract.getResearchMilestones(_researchArea));
         idToProjectDetails[_id].milestone = totalMilestones;
@@ -64,6 +70,11 @@ contract Projects {
         if (details.totalValidations == 5){
             details.status = 2;
         }
+    }
+
+    function updateFundsReceived(uint256 projectId, uint256 newAmount) external {
+        require(msg.sender == milestoneContractAddress, "Only MilestoneTracker can update funds");
+        idToProjectDetails[projectId].fundsReceived = newAmount;
     }
 
     function viewScores(uint256 _id) public view returns(validatorChoices[5] memory){
