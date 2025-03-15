@@ -3,7 +3,7 @@ pragma solidity ^0.8.13;
 import "./interfaces/IAdmin.sol";
 import "./interfaces/IValidator.sol";
 
-contract ProjectTracker {
+contract Projects {
     IValidator public validatorContract;
     IAdmin public adminContract;
     
@@ -55,7 +55,7 @@ contract ProjectTracker {
         }
 
         (, uint256 researchArea, uint8 verificationStatus) = validatorContract.getValidatorDetails(_validatorId); // Validator id is address msg.sender == _validatorId
-        require(researchArea == details.researchArea && verificationStatus == 1); // Check if the research area and the validator is verified
+        require(researchArea == details.researchArea && verificationStatus == 1, "Validator not verified"); // Check if the research area and the validator is verified
         // Validator id check validatorContract.validators(msg.sender).status == 1
         
         details.score += _score;
