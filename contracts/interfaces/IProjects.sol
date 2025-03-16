@@ -7,7 +7,6 @@ interface IProjects {
         uint16 score,
         uint8 milestone,
         uint256 budgetEstimate,
-        validatorChoices[5] memory validatorScores,
         uint8 totalValidations,
         uint256 researchArea,
         uint256 fundsReceived,
@@ -16,8 +15,5 @@ interface IProjects {
 
     function updateFundsReceived(uint256 projectId, uint256 newAmount) external;
 
-    struct validatorChoices {
-        uint256 validatorId;
-        string choices; // Note: As per your comment, you might want to change this to integer type
-    }
+    function setMilestoneContractAddress(address _milestoneContractAddress) external;
 }
