@@ -2,11 +2,14 @@
 pragma solidity ^0.8.13;
 import "./interfaces/IAdmin.sol";
 import "./interfaces/IValidator.sol";
+import "./interfaces/IMilestone.sol";
 
 contract Projects {
     IValidator public validatorContract;
     IAdmin public adminContract;
+    IMilestone public milestoneContract;
     address public milestoneContractAddress;
+    address public owner;
     
     struct validatorChoices {
         uint256 validatorId;
@@ -28,10 +31,16 @@ contract Projects {
     mapping (uint => projectDetails) public idToProjectDetails;
     uint256[] public ids;
 
-    constructor(address _validatorContractAddress, address _adminContractAddress, address _milestoneContractAddress) {
+    constructor(address _validatorContractAddress, address _adminContractAddress) {
         validatorContract = IValidator(_validatorContractAddress);
         adminContract = IAdmin(_adminContractAddress);
+        owner = msg.sender;
+    }
+
+    function setMilestoneContractAddress(address _milestoneContractAddress) public {
+        require(msg.sender == owner, "Only owner can set milestone contract address");
         milestoneContractAddress = _milestoneContractAddress;
+        milestoneContract = IMilestone(milestoneContractAddress);
     }
 
     function addProjectDetails(uint256 _id, uint256 _budgetEstimate, uint256 _researchArea) public {
@@ -69,11 +78,12 @@ contract Projects {
         details.totalValidations++;
         if (details.totalValidations == 5){
             details.status = 2;
+            milestoneContract.setProjectId(_id);
         }
     }
 
     function updateFundsReceived(uint256 projectId, uint256 newAmount) external {
-        require(msg.sender == milestoneContractAddress, "Only MilestoneTracker can update funds");
+        // require(msg.sender == milestoneContractAddress, "Only MilestoneTracker can update funds");
         idToProjectDetails[projectId].fundsReceived = newAmount;
     }
 
