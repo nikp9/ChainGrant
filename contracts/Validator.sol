@@ -3,6 +3,8 @@ pragma solidity ^0.8.9;
 import "./interfaces/IAdmin.sol";
 import "./interfaces/IValidator.sol";
 
+// Validator votes only once per project
+
 contract Validator is IValidator {
     IAdmin public adminContract;
 
@@ -35,7 +37,7 @@ contract Validator is IValidator {
     }
     
     function addValidator(uint256 _id, uint256 _researchArea) public {
-        (, , bool exists) = adminContract.researches(_researchArea);
+        (, , , bool exists) = adminContract.researches(_researchArea);
         require(exists == true, "Research area doesn't exist");
         require(validators[_id].id != _id, "Only add a new validator");
         validatorCount++;
@@ -45,19 +47,20 @@ contract Validator is IValidator {
         validators[validatorCount].validatorHash = 0;
     }
 
-    function updateValidatorStatus(uint256 _id, uint8 _status) public override onlyAdmin {
+    function updateValidatorStatus(uint256 _id, uint8 _vote) public override onlyAdmin {
         require(_id > 0 && _id <= validatorCount, "Invalid id"); // ** To be removed **
-        require(_status == 0 || _status == 1, "Invalid status");
+        require(_vote == 0 || _vote == 1, "Invalid vote");
         ValidatorDetails storage validator = validators[_id];
         
         if (validator.adminsVoted[msg.sender].hasVoted == false){
             validator.adminCount++;
         }
         else{
-            validator.positiveVotes = validator.positiveVotes - validator.adminsVoted[msg.sender].vote;
+            validator.positiveVotes = validator.positiveVotes - validator.adminsVoted[msg.sender].vote; // Change previous vote
         }
 
-        validator.adminsVoted[msg.sender].vote = _status;
+        validator.positiveVotes += _vote;
+        validator.adminsVoted[msg.sender].vote = _vote;
         validator.adminsVoted[msg.sender].hasVoted = true; // If revote happens we need to implement some logic to make increase or decrease votes
 
         uint8 minimumVotesNeeded = validator.adminCount / 2 + 1;
