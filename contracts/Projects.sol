@@ -30,7 +30,6 @@ contract Projects {
 
     mapping (uint256 => projectDetails) public idToProjectDetails;
     mapping(uint256 => uint256[]) public researchAreaToProjectIds;
-    uint256[] public ids;
 
     constructor(address _validatorContractAddress, address _adminContractAddress) {
         validatorContract = IValidator(_validatorContractAddress);
@@ -45,7 +44,6 @@ contract Projects {
     }
 
     function addProjectDetails(uint256 _id, uint256 _budgetEstimate, uint256 _researchArea) public { // Check research area
-        ids.push(_id);
         idToProjectDetails[_id].status = 1;
         idToProjectDetails[_id].researchArea = _researchArea;
         idToProjectDetails[_id].budgetEstimate = _budgetEstimate;
