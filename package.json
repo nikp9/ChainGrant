@@ -5,7 +5,7 @@
     "main": "index.js",
     "scripts": {
       "start": "npx hardhat run scripts/deploy.js",
-      "test": "npx hardhat run tests/testScript.js"
+      "test": "npx hardhat test"
     },
     "keywords": [],
     "author": "",
