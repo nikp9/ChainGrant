@@ -34,7 +34,7 @@ contract MilestoneTracker {
         // Msg.sender == validator address
         (uint256 validatorId, uint256 validatorResearchArea, uint8 validatorStatus) = validatorContract.getValidatorDetails(_validatorId);
         (uint8 projectStatus,,,,,uint256 projectResearchArea,,) = projectsContract.idToProjectDetails(projectId);
-        require(projectStatus == 2, "Project does not exist or is not approved to receive funding");
+        require(projectStatus == 3, "Project does not exist or is not approved to receive funding");
         require(validatorId == _validatorId && validatorStatus == 1, "Not a verified validator");
         require(projectResearchArea == validatorResearchArea, "Validator is not of this research Topic");
         _;
@@ -56,7 +56,7 @@ contract MilestoneTracker {
 
     function requestMilestoneApproval(uint256 projectId) public {
         (uint8 projectStatus,,,,,,,) = projectsContract.idToProjectDetails(projectId); // ECDSA recover sender address to cross verify
-        require(projectStatus == 2, "Project does not exist or is not approved to receive funding");
+        require(projectStatus == 3, "Project does not exist or is not approved to receive funding");
         projects[projectId].currentMilestoneSubmissionStatus = 1;
     }
     
