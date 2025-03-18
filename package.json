@@ -4,7 +4,8 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-      "start": "npx hardhat run scripts/deploy.js"
+      "start": "npx hardhat run scripts/deploy.js",
+      "test": "npx hardhat run tests/testScript.js"
     },
     "keywords": [],
     "author": "",
