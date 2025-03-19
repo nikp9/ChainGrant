@@ -4,20 +4,20 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-      "start": "npx hardhat run scripts/deploy.js",
-      "test": "npx hardhat test"
+        "start": "npx hardhat run scripts/deploy.js",
+        "test": "npx hardhat test"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "dependencies": {
-      "@account-abstraction/contracts": "^0.6.0",
-      "@openzeppelin/contracts": "^4.2.0",
-      "@nomicfoundation/hardhat-ethers": "^3.0.8",
-      "ethers": "^5.7.2",
-      "hardhat": "^2.22.18"
+        "@account-abstraction/contracts": "^0.6.0",
+        "@nomicfoundation/hardhat-ethers": "^3.0.8",
+        "@openzeppelin/contracts": "^4.2.0",
+        "ethers": "6.13.5",
+        "hardhat": "^2.22.18"
     },
     "devDependencies": {
-      "@nomicfoundation/hardhat-toolbox": "^5.0.0"
+        "@nomicfoundation/hardhat-toolbox": "^5.0.0"
     }
-}  
+}
