@@ -3,10 +3,10 @@ pragma solidity ^0.8.0;
 
 import "./interfaces/IAdmin.sol";
 import "./interfaces/IValidator.sol";
-import "./interfaces/IProjects.sol";
+import "./interfaces/IProject.sol";
 
 
-contract MilestoneTracker {
+contract Milestone {
     IProjects public projectsContract;
     IValidator public validatorContract;
     

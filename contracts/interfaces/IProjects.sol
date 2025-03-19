@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-interface IProjects {
+interface IProject {
     function idToProjectDetails(uint256 _projectId) external view returns (
         uint8 status,
         uint16 score,

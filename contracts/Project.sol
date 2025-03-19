@@ -4,7 +4,7 @@ import "./interfaces/IAdmin.sol";
 import "./interfaces/IValidator.sol";
 import "./interfaces/IMilestone.sol";
 
-contract Projects {
+contract Project {
     IValidator public validatorContract;
     IAdmin public adminContract;
     IMilestone public milestoneContract;
