@@ -7,7 +7,7 @@ import "./interfaces/IProject.sol";
 
 
 contract Milestone {
-    IProjects public projectsContract;
+    IProject public projectsContract;
     IValidator public validatorContract;
     
     struct MilestoneStatus {
@@ -26,7 +26,7 @@ contract Milestone {
     mapping(uint256 => ProjectMilestones) public projects;
     
     constructor(address _projectsContractAddress, address _validatorContractAddress) {
-        projectsContract = IProjects(_projectsContractAddress);
+        projectsContract = IProject(_projectsContractAddress);
         validatorContract = IValidator(_validatorContractAddress);
     }
     
