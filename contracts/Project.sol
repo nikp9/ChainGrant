@@ -12,12 +12,14 @@ contract Project {
     address public owner;
     
     struct validatorChoices {
-        uint256 validatorId;
+        address validatorId;
         string choices;
     }
 
     struct projectDetails {
-        uint8 status; // Status Codes {0: Does not exist, 1: Exists, 2: Atleast 5 validators have validated, 3: Selected for funding}
+        address projectOwner;
+        bytes32 userId;
+        uint8 status; // Status Codes {0: Does not exist, 1: Exists, 2: Atleast 5 validators have validated, 3: Selected for funding, 4: Completed}
         uint16 score;
         uint8 milestone;
         uint256 budgetEstimate;
@@ -28,8 +30,8 @@ contract Project {
         uint256 additionalFundsReceived;
     }
 
-    mapping (uint256 => projectDetails) public idToProjectDetails;
-    mapping(uint256 => uint256[]) public researchAreaToProjectIds;
+    mapping (address => projectDetails) public projectOwnerToProjectDetails;
+    mapping(uint256 => address[]) public researchAreaToProjectOwners;
 
     constructor(address _validatorContractAddress, address _adminContractAddress) {
         validatorContract = IValidator(_validatorContractAddress);
@@ -43,18 +45,21 @@ contract Project {
         milestoneContract = IMilestone(milestoneContractAddress);
     }
 
-    function addProjectDetails(uint256 _id, uint256 _budgetEstimate, uint256 _researchArea) public { // Check research area
-        idToProjectDetails[_id].status = 1;
-        idToProjectDetails[_id].researchArea = _researchArea;
-        idToProjectDetails[_id].budgetEstimate = _budgetEstimate;
-        idToProjectDetails[_id].score = 0;
-        idToProjectDetails[_id].milestone = 0;
-        idToProjectDetails[_id].totalValidations = 0;
-        idToProjectDetails[_id].fundsReceived = 0;
-        idToProjectDetails[_id].additionalFundsReceived = 0;
+    function addProjectDetails(uint256 _budgetEstimate, uint256 _researchArea) public {
+        (uint256 _id,,,,) = adminContract.researches(_researchArea); // Check if the research area exists
+        require(_researchArea == _id, "Research does not exist");
+        projectOwnerToProjectDetails[msg.sender].projectOwner = msg.sender;
+        projectOwnerToProjectDetails[msg.sender].status = 1;
+        projectOwnerToProjectDetails[msg.sender].researchArea = _researchArea;
+        projectOwnerToProjectDetails[msg.sender].budgetEstimate = _budgetEstimate;
+        projectOwnerToProjectDetails[msg.sender].score = 0;
+        projectOwnerToProjectDetails[msg.sender].milestone = 0;
+        projectOwnerToProjectDetails[msg.sender].totalValidations = 0;
+        projectOwnerToProjectDetails[msg.sender].fundsReceived = 0;
+        projectOwnerToProjectDetails[msg.sender].additionalFundsReceived = 0;
 
         uint8 totalMilestones = uint8(adminContract.getResearchMilestones(_researchArea));
-        idToProjectDetails[_id].milestone = totalMilestones;
+        projectOwnerToProjectDetails[msg.sender].milestone = totalMilestones;
     }
 
     function calculateScoreFromChoices(string memory _binaryChoices) internal pure returns (uint16) {
@@ -71,9 +76,9 @@ contract Project {
     }
 
     // Only validator can call it and ** match it with validator address **
-    function updateScore(uint256 _id, uint256 _validatorId, string memory _choices) public {
-        require(idToProjectDetails[_id].status == 1, "Project does not exist");
-        projectDetails storage details = idToProjectDetails[_id];
+    function updateScore(address _projectOwner, address _validatorId, string memory _choices) public {
+        require(projectOwnerToProjectDetails[_projectOwner].status == 1, "Project does not exist");
+        projectDetails storage details = projectOwnerToProjectDetails[_projectOwner];
 
         for (uint8 i = 0; i<5; i++){ // Update validator contract and this will get fixed
             if (details.validatorScores[i].validatorId == _validatorId){
@@ -91,29 +96,30 @@ contract Project {
         details.totalValidations++;
         if (details.totalValidations == 5){
             details.status = 2;
-            researchAreaToProjectIds[details.researchArea].push(_id);
+            researchAreaToProjectOwners[details.researchArea].push(_projectOwner);
         }
     }
 
+    // Owner invokes this function when the project verification phase is over
     function selectProjectsForFunding(uint256 _researchArea) public {
         require(msg.sender == owner || adminContract.admins(msg.sender) == 1, "Not authorized");
         
-        uint256[] storage projects = researchAreaToProjectIds[_researchArea];
-        (,,uint256 totalBudget,) = adminContract.researches(_researchArea);
+        address[] storage projects = researchAreaToProjectOwners[_researchArea];
+        (,,,uint256 totalBudget,) = adminContract.researches(_researchArea);
         
         // Sort projects by score
         sortProjectsByScore(_researchArea);
         
         // Select projects for funding based on budget
         for (uint i = 0; i < projects.length; i++) {
-            uint256 projectId = projects[i];
-            projectDetails storage details = idToProjectDetails[projectId];
+            address projectOwner = projects[i];
+            projectDetails storage details = projectOwnerToProjectDetails[projectOwner];
             
             // Only consider fully validated projects
             if (details.status == 2) {
                 if (details.budgetEstimate <= totalBudget) {
                     details.status = 3; // Approved for funding
-                    milestoneContract.setProjectId(projectId); // Create a project entry in the milestone tracker contract
+                    milestoneContract.setProjectOwner(projectOwner); // Create a project entry in the milestone tracker contract
                     totalBudget -= details.budgetEstimate;
                 }
             }
@@ -121,12 +127,12 @@ contract Project {
     }
 
     function sortProjectsByScore(uint256 _researchArea) internal {
-        uint256[] storage projects = researchAreaToProjectIds[_researchArea];
+        address[] storage projects = researchAreaToProjectOwners[_researchArea];
         for (uint i = 0; i < projects.length; i++) {
             for (uint j = i + 1; j < projects.length; j++) {
-                if (idToProjectDetails[projects[i]].score < idToProjectDetails[projects[j]].score) {
+                if (projectOwnerToProjectDetails[projects[i]].score < projectOwnerToProjectDetails[projects[j]].score) {
                     // Swap
-                    uint256 temp = projects[i];
+                    address temp = projects[i];
                     projects[i] = projects[j];
                     projects[j] = temp;
                 }
@@ -135,13 +141,18 @@ contract Project {
     }
 
 
-    function updateFundsReceived(uint256 projectId, uint256 newAmount) external {
-        require(msg.sender == milestoneContractAddress, "Only MilestoneTracker can update funds");
-        idToProjectDetails[projectId].fundsReceived = newAmount;
+    function updateFundsReceived(address _projectOwner, uint256 _newAmount) external {
+        require(msg.sender == milestoneContractAddress, "Only Milestone contract can update funds");
+        projectOwnerToProjectDetails[_projectOwner].fundsReceived = _newAmount;
     }
 
-    function viewScores(uint256 _id) public view returns(validatorChoices[5] memory){
-        require(idToProjectDetails[_id].status != 0, "Project does not exist");
-        return idToProjectDetails[_id].validatorScores;
+    function markProjectAsCompleted(address _projectOwner) external {
+        require(msg.sender == milestoneContractAddress, "Only Milestone contract can call this function");
+        projectOwnerToProjectDetails[_projectOwner].status = 4;
+    }
+
+    function viewScores(address _projectOwner) public view returns(validatorChoices[5] memory){
+        require(projectOwnerToProjectDetails[_projectOwner].status != 0, "Project does not exist");
+        return projectOwnerToProjectDetails[_projectOwner].validatorScores;
     }
 }

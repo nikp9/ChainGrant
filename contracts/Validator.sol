@@ -11,13 +11,13 @@ contract Validator is IValidator {
     struct adminChoices {
         address admin;
         uint8 vote;
-        bool hasVoted; // ** Make it integer **
+        bool hasVoted; // * Make it integer *
     }
     
     struct ValidatorDetails {
-        uint256 id;
+        address validatorId;
         uint256 researchArea;
-        uint8 verificationStatus; // 0: pending, 1: verified
+        uint8 verificationStatus; // 0: pending, 1: verified, 2: Pending verification
         uint8 adminCount;
         uint8 positiveVotes;
         mapping(address => adminChoices) adminsVoted;
@@ -25,7 +25,7 @@ contract Validator is IValidator {
     }
     
     uint256 public validatorCount = 0;
-    mapping(uint256 => ValidatorDetails) public validators;
+    mapping(address => ValidatorDetails) public validators;
     
     constructor(address _adminContractAddress) {
         adminContract = IAdmin(_adminContractAddress);
@@ -36,21 +36,21 @@ contract Validator is IValidator {
         _;
     }
     
-    function addValidator(uint256 _id, uint256 _researchArea) public {
-        (, , , bool exists) = adminContract.researches(_researchArea);
+    function addValidator(uint256 _researchArea) public {
+        (, , , , bool exists) = adminContract.researches(_researchArea);
         require(exists == true, "Research area doesn't exist");
-        require(validators[_id].id != _id, "Only add a new validator");
+        require(validators[msg.sender].validatorId != msg.sender, "Only add a new validator");
         validatorCount++;
-        validators[validatorCount].id = _id;
-        validators[validatorCount].researchArea = _researchArea;
-        validators[validatorCount].verificationStatus = 0;  // Defaults to pending admin need to verify a validator
-        validators[validatorCount].validatorHash = 0;
+        validators[msg.sender].validatorId = msg.sender;
+        validators[msg.sender].researchArea = _researchArea;
+        validators[msg.sender].verificationStatus = 0;  // Defaults to pending admin need to verify a validator
+        validators[msg.sender].validatorHash = 0;
     }
 
-    function updateValidatorStatus(uint256 _id, uint8 _vote) public override onlyAdmin {
-        require(_id > 0 && _id <= validatorCount, "Invalid id"); // ** To be removed **
+    function updateValidatorStatus(address _validatorId, uint8 _vote) public override onlyAdmin {
+        require(validators[_validatorId].verificationStatus > 0, "Invalid validator id");
         require(_vote == 0 || _vote == 1, "Invalid vote");
-        ValidatorDetails storage validator = validators[_id];
+        ValidatorDetails storage validator = validators[_validatorId];
         
         if (validator.adminsVoted[msg.sender].hasVoted == false){
             validator.adminCount++;
@@ -75,9 +75,9 @@ contract Validator is IValidator {
         }
     }
     
-    function getValidatorDetails(uint256 _id) public view override returns (uint256,uint256, uint8) {
-        require(_id > 0 && _id <= validatorCount, "Invalid id");
-        ValidatorDetails storage validator = validators[_id];
-        return (validator.id,validator.researchArea, validator.verificationStatus);
+    function getValidatorDetails(address _validatorId) public view override returns (address,uint256, uint8) {
+        require(validators[_validatorId].verificationStatus > 0, "Invalid validator id");
+        ValidatorDetails storage validator = validators[_validatorId];
+        return (validator.validatorId,validator.researchArea, validator.verificationStatus);
     }
 }

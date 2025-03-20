@@ -12,110 +12,117 @@ contract Milestone {
     
     struct MilestoneStatus {
         uint8 isCompleted;
-        uint completionDate;
+        uint256 startDate;
+        uint256 completionDate;
     }
     
     struct ProjectMilestones {
-        uint256 projectId;
+        address projectOwner;
         mapping(uint8 => MilestoneStatus) milestoneStatuses; // milestone number => status
-        uint8 currentMilestoneSubmissionStatus; // 0: Work not submitted, 1: Work submitted for review, 2: Validator wants a resubmission, 3: Final Submission
+        uint8 currentMilestoneSubmissionStatus; // 0: Work not submitted, 1: Work submitted for review, 2: Validator wants a resubmission, 3: Final Submission, 4: Completed
         uint8 currentMilestone;
         uint8 lastDisbursedMilestone; // Track the last milestone for which funds were disbursed
     }
     
-    mapping(uint256 => ProjectMilestones) public projects;
+    mapping(address => ProjectMilestones) public projects;
     
     constructor(address _projectsContractAddress, address _validatorContractAddress) {
         projectsContract = IProject(_projectsContractAddress);
         validatorContract = IValidator(_validatorContractAddress);
     }
     
-    modifier onlyVerifiedProjectAndValidator(uint256 projectId, uint256 _validatorId) {
-        // Msg.sender == validator address
-        (uint256 validatorId, uint256 validatorResearchArea, uint8 validatorStatus) = validatorContract.getValidatorDetails(_validatorId);
-        (uint8 projectStatus,,,,,uint256 projectResearchArea,,) = projectsContract.idToProjectDetails(projectId);
+    modifier onlyVerifiedProjectAndValidator(address _projectOwner, address _validatorId) {
+        (, uint256 validatorResearchArea, uint8 validatorStatus) = validatorContract.getValidatorDetails(_validatorId);
+        (,,uint8 projectStatus,,,,,uint256 projectResearchArea,,) = projectsContract.projectOwnerToProjectDetails(_projectOwner);
         require(projectStatus == 3, "Project does not exist or is not approved to receive funding");
-        require(validatorId == _validatorId && validatorStatus == 1, "Not a verified validator");
+        require(validatorStatus == 1, "Not a verified validator");
         require(projectResearchArea == validatorResearchArea, "Validator is not of this research Topic");
         _;
     }
     
-    modifier validProject(uint256 projectId) {
-        (uint8 status,,,,,,,) = projectsContract.idToProjectDetails(projectId);
-        require(status != 0, "Project does not exist");
+    modifier validProject(address _projectOwner) {
+        (,,uint8 status,,,,,,,) = projectsContract.projectOwnerToProjectDetails(_projectOwner);
+        require(status == 3, "Project not approved for funding");
         _;
     }
 
-    function setProjectId(uint256 _id) external {
+    function setProjectOwner(address _projectOwner) external {
         require(msg.sender == address(projectsContract), "Only projects contract can call this function");
-        projects[_id].projectId = _id;
-        projects[_id].currentMilestoneSubmissionStatus;
-        projects[_id].currentMilestone;
-        projects[_id].lastDisbursedMilestone;
+        projects[_projectOwner].projectOwner = _projectOwner;
+        projects[_projectOwner].currentMilestoneSubmissionStatus;
+        projects[_projectOwner].milestoneStatuses[0].startDate = block.timestamp;
+        projects[_projectOwner].currentMilestone = 0;
+        projects[_projectOwner].lastDisbursedMilestone;
     }
 
-    function requestMilestoneApproval(uint256 projectId) public {
-        (uint8 projectStatus,,,,,,,) = projectsContract.idToProjectDetails(projectId); // ECDSA recover sender address to cross verify
-        require(projectStatus == 3, "Project does not exist or is not approved to receive funding");
-        projects[projectId].currentMilestoneSubmissionStatus = 1;
+    function requestMilestoneApproval() public {
+        (address _projectOwner,,uint8 _projectStatus,,,,,,,) = projectsContract.projectOwnerToProjectDetails(msg.sender);
+        require(_projectStatus == 3, "Project does not exist or is not approved to receive funding");
+        projects[_projectOwner].currentMilestoneSubmissionStatus = 1;
     }
     
     function updateMilestoneStatus(
-        uint256 projectId,
-        uint8 status,
-        uint256 validatorId
+        address _projectOwner,
+        uint8 _status
     ) public 
-        onlyVerifiedProjectAndValidator(projectId, validatorId)
+        onlyVerifiedProjectAndValidator(_projectOwner, msg.sender)
     {
         // Get total milestones for the project
-        (,, uint8 totalMilestones,,,,,) = projectsContract.idToProjectDetails(projectId);
-        uint8 currentMilestone = projects[projectId].currentMilestone;
+        (,,,, uint8 totalMilestones,,,,,) = projectsContract.projectOwnerToProjectDetails(_projectOwner);
+        uint8 currentMilestone = projects[_projectOwner].currentMilestone;
         
         require(currentMilestone < totalMilestones, "Invalid milestone number");
-        require(status == 0 || status == 1, "Invalid status");
-        require(projects[projectId].currentMilestoneSubmissionStatus == 1, "Work not submitted");
+        require(_status == 0 || _status == 1, "Invalid status");
+        require(projects[_projectOwner].currentMilestoneSubmissionStatus == 1, "Work not submitted");
 
-        verify(projectId, currentMilestone, status);
+        verify(_projectOwner, currentMilestone, _status);
     }
 
-    function verify(uint256 projectId, uint8 currentMilestone, uint8 verificationStatus) internal {
+    function verify(address _projectOwner, uint8 _currentMilestone, uint8 _verificationStatus) internal {
         // If marking as complete, store completion date and disburse funds
-        if (verificationStatus == 1) {
-            projects[projectId].milestoneStatuses[currentMilestone].completionDate = block.timestamp;
-            
-            // Disburse funds without sequential milestone check
-            disburseFunds(projectId, currentMilestone);
+        if (projects[_projectOwner].currentMilestoneSubmissionStatus == 3) {
+            projects[_projectOwner].currentMilestoneSubmissionStatus = 4;
+            projectsContract.markProjectAsCompleted(_projectOwner);
         }
-        else { // verificationStatus == 0
-            projects[projectId].currentMilestoneSubmissionStatus = 2;
+        else {
+            if (_verificationStatus == 1) {
+                projects[_projectOwner].milestoneStatuses[_currentMilestone].completionDate = block.timestamp;
+                
+                // Disburse funds without sequential milestone check
+                disburseFunds(_projectOwner, _currentMilestone);
+            }
+            else { // verificationStatus == 0
+                projects[_projectOwner].currentMilestoneSubmissionStatus = 2;
+            }
         }
         
-        projects[projectId].milestoneStatuses[currentMilestone].isCompleted = verificationStatus;
+        projects[_projectOwner].milestoneStatuses[_currentMilestone].isCompleted = _verificationStatus;
     }
     
-    function disburseFunds(uint256 projectId, uint8 currentMilestone) internal {
+    function disburseFunds(address _projectOwner, uint8 _currentMilestone) internal {
         // Get project details
-        (,, uint8 totalMilestones, uint256 budgetEstimate,,,uint256 fundsReceived,) = 
-            projectsContract.idToProjectDetails(projectId);
+        (,,,, uint8 totalMilestones, uint256 budgetEstimate,,,uint256 fundsReceived,) = 
+            projectsContract.projectOwnerToProjectDetails(_projectOwner);
         
         // Calculate the amount to disburse (only using budgetEstimate, not additionalFunds)
         uint256 amountToDisburse;
         
-        if (currentMilestone == totalMilestones - 1) {
+        if (_currentMilestone == totalMilestones - 1) {
             // For the last milestone, disburse any remaining funds
             amountToDisburse = budgetEstimate - fundsReceived;
             // Reset submission status to 0 (work not submitted)
-            projects[projectId].currentMilestoneSubmissionStatus = 4; // Final Submission
+            projects[_projectOwner].currentMilestone += 1;
+            projects[_projectOwner].currentMilestoneSubmissionStatus = 3; // Final Submission
         } else {
-            projects[projectId].currentMilestone += 1;
+            projects[_projectOwner].currentMilestone += 1;
             // Reset submission status to 0 (work not submitted)
-            projects[projectId].currentMilestoneSubmissionStatus = 0;
+            projects[_projectOwner].currentMilestoneSubmissionStatus = 0;
 
             // For other milestones, calculate the per-milestone amount
             uint256 baseAmount = budgetEstimate / totalMilestones;
             
             // Handle remainder
-            if (currentMilestone < budgetEstimate % totalMilestones) {
+            if (_currentMilestone < budgetEstimate % totalMilestones) {
                 baseAmount += 1;
             }
             
@@ -123,34 +130,37 @@ contract Milestone {
         }
         
         // Update the project's funds received
-        projectsContract.updateFundsReceived(projectId, fundsReceived + amountToDisburse);
+        projectsContract.updateFundsReceived(_projectOwner, fundsReceived + amountToDisburse);
+
+        uint8 nextMilestone = projects[_projectOwner].currentMilestone;
+        projects[_projectOwner].milestoneStatuses[nextMilestone].startDate = block.timestamp;
         
         // Update the last disbursed milestone
-        projects[projectId].lastDisbursedMilestone = currentMilestone;
+        projects[_projectOwner].lastDisbursedMilestone = _currentMilestone;
     }
     
-    function getMilestoneDetails(uint256 projectId) public view 
-        validProject(projectId)
+    function getMilestoneDetails(address _projectOwner) public view 
+        validProject(_projectOwner)
         returns (uint[] memory completionDates, uint8[] memory statuses) 
     {
         // Get total milestones for the project
-        (,,uint8 totalMilestones,,,,,) = projectsContract.idToProjectDetails(projectId);
+        (,,,,uint8 totalMilestones,,,,,) = projectsContract.projectOwnerToProjectDetails(_projectOwner);
         
         completionDates = new uint[](totalMilestones);
         statuses = new uint8[](totalMilestones);
         
         for (uint8 i = 0; i < totalMilestones; i++) {
-            completionDates[i] = projects[projectId].milestoneStatuses[i].completionDate;
-            statuses[i] = projects[projectId].milestoneStatuses[i].isCompleted;
+            completionDates[i] = projects[_projectOwner].milestoneStatuses[i].completionDate;
+            statuses[i] = projects[_projectOwner].milestoneStatuses[i].isCompleted;
         }
         
         return (completionDates, statuses);
     }
     
-    function getLastDisbursedMilestone(uint256 projectId) public view
-        validProject(projectId)
+    function getLastDisbursedMilestone(address _projectOwner) public view
+        validProject(_projectOwner)
         returns (uint8)
     {
-        return projects[projectId].lastDisbursedMilestone;
+        return projects[_projectOwner].lastDisbursedMilestone;
     }
 }

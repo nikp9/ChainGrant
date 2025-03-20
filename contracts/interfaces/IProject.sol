@@ -2,7 +2,9 @@
 pragma solidity ^0.8.13;
 
 interface IProject {
-    function idToProjectDetails(uint256 _projectId) external view returns (
+    function projectOwnerToProjectDetails(address _projectOwner) external view returns (
+        address projectOwner,
+        bytes32 userId,
         uint8 status,
         uint16 score,
         uint8 milestone,
@@ -13,7 +15,7 @@ interface IProject {
         uint256 additionalFundsReceived
     );
 
-    function updateFundsReceived(uint256 projectId, uint256 newAmount) external;
-
+    function updateFundsReceived(address _projectOwner, uint256 _newAmount) external;
+    function markProjectAsCompleted(address _projectOwner) external;
     function setMilestoneContractAddress(address _milestoneContractAddress) external;
 }
