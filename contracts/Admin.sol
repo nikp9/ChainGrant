@@ -4,7 +4,7 @@ import "./interfaces/IAdmin.sol";
 
 contract Admin is IAdmin {
     // Super admin address - cannot be changed after deployment
-    address public immutable admin;
+    address public admin;
     
     uint256[] public researchArea;
     
@@ -12,6 +12,7 @@ contract Admin is IAdmin {
     struct researchDetails {
         uint256 id;
         uint8 totalMilestones;
+        uint256 milestoneDuration;
         uint256 budget;
         bool exists;
     }
@@ -29,11 +30,11 @@ contract Admin is IAdmin {
     }
 
     // Add a new research with ID and name
-    function addResearch(uint256 _id, uint8 _totalMilestones, uint256 _budget) public {
+    function addResearch(uint256 _id, uint8 _totalMilestones, uint256 _milestoneDuration, uint256 _budget) public {
         require(isAdmin(msg.sender), "Only admins can add new research areas");
         require(!researches[_id].exists, "Research ID already exists");
         
-        researches[_id] = researchDetails(_id, _totalMilestones, _budget, true);
+        researches[_id] = researchDetails(_id, _totalMilestones, _milestoneDuration, _budget, true);
         researchArea.push(_id);
     }
     
