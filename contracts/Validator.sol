@@ -48,7 +48,7 @@ contract Validator is IValidator {
     }
 
     function updateValidatorStatus(address _validatorId, uint8 _vote) public override onlyAdmin {
-        require(validators[_validatorId].verificationStatus > 0, "Invalid validator id");
+        require(validators[_validatorId].verificationStatus == 0, "Invalid validator id");
         require(_vote == 0 || _vote == 1, "Invalid vote");
         ValidatorDetails storage validator = validators[_validatorId];
         
@@ -76,7 +76,7 @@ contract Validator is IValidator {
     }
     
     function getValidatorDetails(address _validatorId) public view override returns (address,uint256, uint8) {
-        require(validators[_validatorId].verificationStatus > 0, "Invalid validator id");
+        require(validators[_validatorId].verificationStatus > 0, "Unverified validator");
         ValidatorDetails storage validator = validators[_validatorId];
         return (validator.validatorId,validator.researchArea, validator.verificationStatus);
     }
