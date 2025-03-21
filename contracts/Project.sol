@@ -76,7 +76,8 @@ contract Project {
     }
 
     // Only validator can call it and ** match it with validator address **
-    function updateScore(address _projectOwner, address _validatorId, string memory _choices) public {
+    function updateScore(address _projectOwner, string memory _choices) public {
+        (address _validatorId,,) = validatorContract.getValidatorDetails(msg.sender);
         require(projectOwnerToProjectDetails[_projectOwner].status == 1, "Project does not exist");
         projectDetails storage details = projectOwnerToProjectDetails[_projectOwner];
 
