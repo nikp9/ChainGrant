@@ -76,7 +76,7 @@ contract Validator is IValidator {
     }
     
     function getValidatorDetails(address _validatorId) public view override returns (address,uint256, uint8) {
-        require(validators[_validatorId].verificationStatus > 0, "Unverified validator");
+        require(validators[_validatorId].verificationStatus > 0, "Validator not verified");
         ValidatorDetails storage validator = validators[_validatorId];
         return (validator.validatorId,validator.researchArea, validator.verificationStatus);
     }
