@@ -81,21 +81,24 @@ contract Milestone {
     function verify(address _projectOwner, uint8 _currentMilestone, uint8 _verificationStatus) internal {
         // If marking as complete, store completion date and disburse funds
         (,,,, uint8 totalMilestones,,,,,) = projectsContract.projectOwnerToProjectDetails(_projectOwner);
-        if (_currentMilestone == totalMilestones) {
-            projects[_projectOwner].currentMilestoneSubmissionStatus = 4;
-            projectsContract.markProjectAsCompleted(_projectOwner);
-        }
-        else {
-            if (_verificationStatus == 1) {
+
+        if (_verificationStatus == 1) {
+            if (_currentMilestone == totalMilestones) {
+                projects[_projectOwner].currentMilestoneSubmissionStatus = 4;
                 projects[_projectOwner].milestoneStatuses[_currentMilestone].completionDate = block.timestamp;
-                
+                projectsContract.markProjectAsCompleted(_projectOwner);
+            }
+            else {
+                projects[_projectOwner].milestoneStatuses[_currentMilestone].completionDate = block.timestamp;
+            
                 // Disburse funds without sequential milestone check
                 disburseFunds(_projectOwner, _currentMilestone);
             }
-            else { // verificationStatus == 0
-                projects[_projectOwner].currentMilestoneSubmissionStatus = 2;
-            }
         }
+        else { // verificationStatus == 0
+            projects[_projectOwner].currentMilestoneSubmissionStatus = 2;
+        }
+        
         
         projects[_projectOwner].milestoneStatuses[_currentMilestone].isCompleted = _verificationStatus;
     }
