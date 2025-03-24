@@ -71,7 +71,7 @@ contract Milestone {
         (,,,, uint8 totalMilestones,,,,,) = projectsContract.projectOwnerToProjectDetails(_projectOwner);
         uint8 currentMilestone = projects[_projectOwner].currentMilestone;
         
-        require(currentMilestone < totalMilestones, "Invalid milestone number");
+        require(currentMilestone <= totalMilestones, "Invalid milestone number");
         require(_status == 0 || _status == 1, "Invalid status");
         require(projects[_projectOwner].currentMilestoneSubmissionStatus == 1, "Work not submitted");
 
@@ -80,7 +80,8 @@ contract Milestone {
 
     function verify(address _projectOwner, uint8 _currentMilestone, uint8 _verificationStatus) internal {
         // If marking as complete, store completion date and disburse funds
-        if (projects[_projectOwner].currentMilestoneSubmissionStatus == 3) {
+        (,,,, uint8 totalMilestones,,,,,) = projectsContract.projectOwnerToProjectDetails(_projectOwner);
+        if (_currentMilestone == totalMilestones) {
             projects[_projectOwner].currentMilestoneSubmissionStatus = 4;
             projectsContract.markProjectAsCompleted(_projectOwner);
         }
@@ -110,14 +111,8 @@ contract Milestone {
         if (_currentMilestone == totalMilestones - 1) {
             // For the last milestone, disburse any remaining funds
             amountToDisburse = budgetEstimate - fundsReceived;
-            // Reset submission status to 0 (work not submitted)
-            projects[_projectOwner].currentMilestone += 1;
-            projects[_projectOwner].currentMilestoneSubmissionStatus = 3; // Final Submission
-        } else {
-            projects[_projectOwner].currentMilestone += 1;
-            // Reset submission status to 0 (work not submitted)
-            projects[_projectOwner].currentMilestoneSubmissionStatus = 0;
 
+        } else {
             // For other milestones, calculate the per-milestone amount
             uint256 baseAmount = budgetEstimate / totalMilestones;
             
@@ -129,6 +124,8 @@ contract Milestone {
             amountToDisburse = baseAmount;
         }
         
+        projects[_projectOwner].currentMilestone += 1;
+        projects[_projectOwner].currentMilestoneSubmissionStatus = 0;
         // Update the project's funds received
         projectsContract.updateFundsReceived(_projectOwner, fundsReceived + amountToDisburse);
 
