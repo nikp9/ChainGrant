@@ -43,7 +43,7 @@ describe("Admin Contract", function () {
   describe("Research Management", function () {
     beforeEach(async function () {
       // Add a research area first - use simple number instead of parseEther
-      await admin.addResearch(101, 5, budget);
+      await admin.addResearch(101, 5, 1, budget);
     });
 
     it("Should add a new research area", async function () {
@@ -57,13 +57,13 @@ describe("Admin Contract", function () {
 
     it("Should prevent adding duplicate research IDs", async function () {
       await expect(
-        admin.addResearch(101, 3, 50)
+        admin.addResearch(101, 5, 1, budget)
       ).to.be.revertedWith("Research ID already exists");
     });
 
     it("Should allow admin to add multiple research areas", async function () {
-      await admin.addResearch(102, 3, 50);
-      await admin.addResearch(103, 4, 75);
+      await admin.addResearch(102, 3, 1, budget);
+      await admin.addResearch(103, 7, 1, budget);
       
       // Check count
       expect(await admin.getResearchCount()).to.equal(3);
@@ -78,7 +78,7 @@ describe("Admin Contract", function () {
 
     it("Should prevent non-admins from adding research", async function () {
       await expect(
-        admin.connect(addr1).addResearch(102, 3, 50)
+        admin.connect(addr1).addResearch(101, 5, 1, budget)
       ).to.be.revertedWith("Only admins can add new research areas");
     });
 
