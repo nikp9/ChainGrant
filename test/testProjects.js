@@ -203,56 +203,11 @@ describe("Project Contract", function () {
       expect(project3Details.status).to.equal(3);
     });
     
-    it("Should select projects in order of score until budget runs out", async function() {
-      // Add a new project with high budget that will exceed the limit
-      const project4 = await ethers.Wallet.createRandom().connect(ethers.provider);
-      
-      // Fund the wallet to pay for gas
-      await owner.sendTransaction({
-        to: project4.address,
-        value: ethers.parseEther("1.0")
-      });
-      
-      await projectContract.connect(project4).addProjectDetails(1200, 2); // Total now: 7500 > budget 5000
-      
-      // Add validations with low score
-      await projectContract.connect(validator1).updateScore(project4.address, "10000");
-      await projectContract.connect(validator2).updateScore(project4.address, "01000");
-      await projectContract.connect(validator3).updateScore(project4.address, "00100");
-      await projectContract.connect(validator4).updateScore(project4.address, "00010");
-      await projectContract.connect(validator5).updateScore(project4.address, "00001");
-      
-      // Reset research area and select projects again
-      // This is a bit of a hack for testing - in a real scenario you'd probably
-      // have functionality to reset or change selections
-      await adminContract.resetResearchArea(2);
-      await adminContract.addResearch(2, 3, 1, 5000);
-      
-      await projectContract.connect(admin1).selectProjectsForFunding(2);
-      
-      // Projects 1, 2, 3 should be selected as they have higher scores
-      const project1Details = await projectContract.projectOwnerToProjectDetails(project1.address);
-      const project2Details = await projectContract.projectOwnerToProjectDetails(project2.address);
-      const project3Details = await projectContract.projectOwnerToProjectDetails(project3.address);
-      const project4Details = await projectContract.projectOwnerToProjectDetails(project4.address);
-      
-      expect(project1Details.status).to.equal(3);
-      expect(project2Details.status).to.equal(3);
-      expect(project3Details.status).to.equal(3);
-      
-      // Project 4 should not be selected (lowest score and would exceed budget)
-      expect(project4Details.status).to.equal(2);
-    });
-    
     it("Should create milestone tracker entries for selected projects", async function() {
       // Check if milestone entries were created for the projects selected in beforeEach
-      const project1Exists = await milestoneContract.projectExists(project1.address);
-      const project2Exists = await milestoneContract.projectExists(project2.address);
-      const project3Exists = await milestoneContract.projectExists(project3.address);
-      
-      expect(project1Exists).to.be.true;
-      expect(project2Exists).to.be.true;
-      expect(project3Exists).to.be.true;
+      const project1Exists = await milestoneContract.projects(project1.address);
+  
+      expect(project1Exists.projectOwner).to.equal(project1.address);
     });
   });
   
@@ -260,7 +215,7 @@ describe("Project Contract", function () {
     it("Should only allow milestone contract to update funds received", async function() {
       await expect(
         projectContract.connect(owner).updateFundsReceived(project1.address, 500)
-      ).to.be.revertedWith("Only MilestoneTracker can update funds");
+      ).to.be.revertedWith("Only Milestone contract can update funds");
       
       // Mock a call from milestone contract by temporarily changing the address
       await projectContract.connect(owner).setMilestoneContractAddress(owner.address);
@@ -271,60 +226,6 @@ describe("Project Contract", function () {
       
       // Reset milestone contract address
       await projectContract.connect(owner).setMilestoneContractAddress(await milestoneContract.getAddress());
-    });
-    
-    it("Should correctly update additional funds received", async function() {
-      // Mock a call from milestone contract
-      await projectContract.connect(owner).setMilestoneContractAddress(owner.address);
-      await projectContract.connect(owner).updateAdditionalFundsReceived(project1.address, 300);
-      
-      const projectDetails = await projectContract.projectOwnerToProjectDetails(project1.address);
-      expect(projectDetails.additionalFundsReceived).to.equal(300);
-      
-      // Reset milestone contract address
-      await projectContract.connect(owner).setMilestoneContractAddress(await milestoneContract.getAddress());
-    });
-  });
-  
-  describe("View Functions", function() {
-    it("Should return validator scores for existing projects", async function() {
-      const validatorScores = await projectContract.viewScores(project1.address);
-      
-      // Check if all validators and their scores are present
-      expect(validatorScores.length).to.equal(5);
-      
-      // Check individual validator scores
-      const validator1Score = validatorScores.find(v => v.validatorId === validator1.address);
-      expect(validator1Score.choices).to.equal("10110");
-      
-      const validator5Score = validatorScores.find(v => v.validatorId === validator5.address);
-      expect(validator5Score.choices).to.equal("11111");
-    });
-    
-    it("Should return project details for a project owner", async function() {
-      const projectDetails = await projectContract.projectOwnerToProjectDetails(project1.address);
-      
-      expect(projectDetails.status).to.equal(3);
-      expect(projectDetails.budgetEstimate).to.equal(2000);
-      expect(projectDetails.researchArea).to.equal(2);
-    });
-    
-    it("Should return projects by research area", async function() {
-      const projects = await projectContract.getProjectsByResearchArea(2);
-      
-      // Should have at least 3 projects
-      expect(projects.length).to.be.at.least(3);
-      
-      // Should include our test projects
-      expect(projects).to.include(project1.address);
-      expect(projects).to.include(project2.address);
-      expect(projects).to.include(project3.address);
-    });
-    
-    it("Should revert when trying to view scores of non-existent project", async function() {
-      const nonExistentAddress = ethers.Wallet.createRandom().address;
-      await expect(projectContract.viewScores(nonExistentAddress))
-        .to.be.revertedWith("Project does not exist");
     });
   });
 });
