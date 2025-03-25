@@ -158,9 +158,9 @@ describe("Milestone Contract", function () {
         expect(project1Details.fundsReceived).to.equal(2000);
         expect(project1Details.status).to.equal(4); // Project completed
 
-        for (let i = 0; i<3; i++){
-            console.log(`Milestone ${i+1}, Funds Received ${funds[i]}`)
-        }
+        // for (let i = 0; i<3; i++){
+        //     console.log(`Milestone ${i+1}, Funds Received ${funds[i]}`)
+        // }
     });
   });
 
