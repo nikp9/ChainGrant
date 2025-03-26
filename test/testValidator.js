@@ -80,4 +80,28 @@ describe("Validator Contract", function () {
     });
   });
 
+  describe("Validator Details", function () {
+    beforeEach(async function () {
+      await validatorContract.connect(validator1).addValidator(1);
+      await validatorContract.connect(validator2).addValidator(1);
+    });
+    it("Should return verified validator details", async function () {
+      // Verify validator first
+
+      await validatorContract.connect(admin1).updateValidatorStatus(validator1.address, 1);
+      await validatorContract.connect(admin2).updateValidatorStatus(validator1.address, 1);
+      await validatorContract.connect(admin3).updateValidatorStatus(validator1.address, 1);
+
+      const details = await validatorContract.getValidatorDetails(validator1.address);
+      expect(details[0]).to.equal(validator1.address);
+      expect(details[1]).to.equal(1);
+      expect(details[2]).to.equal(1);
+    });
+
+    it("Should reject unverified validators", async function () {
+      await expect(
+        validatorContract.getValidatorDetails(validator1.address)
+      ).to.be.revertedWith("Validator not verified");
+    });
+  });
 });
