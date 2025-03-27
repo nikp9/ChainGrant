@@ -8,4 +8,4 @@
 - Notify client if they are running late for review ✅ (Added startDate and endDates)
 - Make the funds approved automatic ✅
 - Research about the whole process of receiving government funding for research projects.
-- Write testing scripts for all the smart contracts.
+- Write testing scripts for all the smart contracts. ✅
