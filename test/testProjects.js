@@ -227,5 +227,25 @@ describe("Project Contract", function () {
       // Reset milestone contract address
       await projectContract.connect(owner).setMilestoneContractAddress(await milestoneContract.getAddress());
     });
+
+
+  describe("View Functions", function() {
+    describe("viewScores", function() {
+      it("Should return validator scores for an existing project", async function() {
+        const scores = await projectContract.viewScores(project1.address);
+        
+        for (let i = 0; i < 5; i++) {
+          expect(scores[i].validatorId).to.equal([validator1, validator2, validator3, validator4, validator5][i].address);
+          expect(scores[i].choices).to.equal(["10110", "11110", "10110", "10111", "11111"][i]);
+        }
+      });
+      
+      it("Should revert when trying to view scores for non-existent project", async function() {
+        await expect(
+          projectContract.viewScores(nonValidator.address)
+        ).to.be.revertedWith("Project does not exist");
+      });
+    });
+  });
   });
 });
