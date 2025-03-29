@@ -163,5 +163,31 @@ describe("Milestone Contract", function () {
         // }
     });
   });
+  describe("View Functions", function() {
+    it("Should return correct milestone details", async function() {
+      await milestoneContract.connect(project1).requestMilestoneApproval();
+      await milestoneContract.connect(validator1).updateMilestoneStatus(project1.address, 1);
+      
+      const [completionDates, statuses] = await milestoneContract.getMilestoneDetails(project1.address);
+      
+      expect(completionDates.length).to.be.greaterThan(0);
+      expect(statuses.length).to.be.greaterThan(0);
+    });
+
+      it("Should return last disbursed milestone", async function() {
+        await milestoneContract.connect(project1).requestMilestoneApproval();
+        await milestoneContract.connect(validator1).updateMilestoneStatus(project1.address, 1);
+    
+        await milestoneContract.connect(project1).requestMilestoneApproval();
+        await milestoneContract.connect(validator1).updateMilestoneStatus(project1.address, 1);
+        
+        const lastMilestone = await milestoneContract.getLastDisbursedMilestone(project1.address);
+        expect(lastMilestone).to.be.equal(1);
+      });
+  });
+
 
 });
+
+
+
