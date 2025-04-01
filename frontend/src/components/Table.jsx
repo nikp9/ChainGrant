@@ -151,8 +151,9 @@ function GrantsTable() {
             <div className="bg-[#0f172a] border border-gray-700 rounded-md overflow-hidden shadow-sm w-full">
 
                 {/* Pools Counter */}
-                <div className="mb-4 flex justify-between px-4 py-4 items-center border-b-[1px] border-opacity-50 border-gray-600">
-                    <h2 className="text-lg text-white">Projects ({filteredGrants.length})</h2>
+                <div className="mb-4 flex px-4 py-4 items-center border-b-[1px] border-opacity-50 border-gray-600">
+                    <h2 className="text-lg font-medium text-white mr-1">Projects </h2>
+                    <p className="text-lg font-medium text-gray-400">({filteredGrants.length})</p>
                 </div>
 
                 <div className="overflow-x-auto">
