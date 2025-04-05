@@ -1,0 +1,138 @@
+[
+    {
+        "id": "NIH-2023-001",
+        "name": "Cancer Research Initiative",
+        "agency": "National Institutes of Health",
+        "agencyShort": "NIH",
+        "budget": "$12.45M",
+        "budgetChange": "+5.2%",
+        "qtrExpenditure": "$2.18M",
+        "qtrChange": "+12.7%",
+        "ytdExpenditure": "$8.32M",
+        "ytdChange": "+3.4%",
+        "proposals": "84",
+        "successRate": "25%",
+        "fee": "0.3%",
+        "overview": {
+            "description": "This initiative supports innovative research projects aimed at developing new cancer treatments and improving early detection methods. The program focuses on translational research with immediate clinical applications.",
+            "focusAreas": ["Oncology", "Biomarkers", "Immunotherapy", "Precision Medicine"],
+            "keyDates": {
+                "applicationOpen": "2023-01-15",
+                "applicationClose": "2023-04-30",
+                "awardAnnouncement": "2023-08-15",
+                "projectStart": "2023-10-01"
+            },
+            "duration": "3 years",
+            "contact": "Dr. Sarah Johnson, sjohnson@nih.gov"
+        },
+        "requirements": {
+            "eligibility": ["Non-profit organizations", "Academic institutions", "Research hospitals"],
+            "ineligible": ["For-profit companies", "Individuals", "Foreign organizations"],
+            "matchingFunds": "20% required for institutions with >$1M NIH funding",
+            "documentation": ["Research proposal", "Budget justification", "CV of PI", "Letters of collaboration"],
+            "specialRequirements": ["IRB approval required before funding", "Clinical trial registration"]
+        }
+    },
+    {
+        "id": "NSF-2023-042",
+        "name": "Quantum Computing Advancement",
+        "agency": "National Science Foundation",
+        "agencyShort": "NSF",
+        "budget": "$8.75M",
+        "budgetChange": "-2.1%",
+        "qtrExpenditure": "$1.62M",
+        "qtrChange": "-5.3%",
+        "ytdExpenditure": "$5.91M",
+        "ytdChange": "-1.8%",
+        "proposals": "67",
+        "successRate": "10%",
+        "fee": "0.3%",
+        "overview": {
+            "description": "This program funds cutting-edge research in quantum computing architectures, algorithms, and error correction methods. The goal is to accelerate practical applications of quantum computing.",
+            "focusAreas": ["Quantum algorithms", "Qubit technologies", "Quantum error correction", "Quantum-classical hybrid systems"],
+            "keyDates": {
+                "applicationOpen": "2023-02-01",
+                "applicationClose": "2023-05-15",
+                "awardAnnouncement": "2023-09-30",
+                "projectStart": "2024-01-01"
+            },
+            "duration": "2-4 years",
+            "contact": "Dr. Michael Chen, mchen@nsf.gov"
+        },
+        "requirements": {
+            "eligibility": ["US academic institutions", "National labs", "Industry-academic partnerships"],
+            "ineligible": ["Foreign institutions", "Individual researchers"],
+            "matchingFunds": "Not required but encouraged",
+            "documentation": ["Technical proposal", "Management plan", "Data management plan", "Collaboration plan"],
+            "specialRequirements": ["Open access publication requirement", "Quarterly progress reports"]
+        }
+    },
+    {
+        "id": "DOE-2023-156",
+        "name": "Renewable Energy Solutions",
+        "agency": "Department of Energy",
+        "agencyShort": "DOE",
+        "budget": "$15.20M",
+        "budgetChange": "+8.9%",
+        "qtrExpenditure": "$3.45M",
+        "qtrChange": "+22.1%",
+        "ytdExpenditure": "$10.12M",
+        "ytdChange": "+7.3%",
+        "proposals": "112",
+        "successRate": "31%",
+        "fee": "0.3%",
+        "overview": {
+            "description": "This grant supports research and development of innovative renewable energy technologies with potential for commercial scalability, focusing on solar, wind, and energy storage solutions.",
+            "focusAreas": ["Solar cell efficiency", "Grid-scale storage", "Offshore wind technologies", "Hybrid renewable systems"],
+            "keyDates": {
+                "applicationOpen": "2023-03-01",
+                "applicationClose": "2023-06-30",
+                "awardAnnouncement": "2023-10-15",
+                "projectStart": "2024-01-15"
+            },
+            "duration": "3-5 years",
+            "contact": "Dr. Emily Rodriguez, erodriguez@doe.gov"
+        },
+        "requirements": {
+            "eligibility": ["US-based entities", "Academic institutions", "National labs", "Energy startups"],
+            "ineligible": ["Foreign-owned companies", "Fossil fuel companies"],
+            "matchingFunds": "50% cost share required for for-profit entities",
+            "documentation": ["Technical approach", "Commercialization plan", "Environmental impact assessment", "Team qualifications"],
+            "specialRequirements": ["Phase-gate funding structure", "Technology readiness level assessment"]
+        }
+    },
+    {
+        "id": "DELTA-2023-008",
+        "name": "Climate Change Mitigation Research",
+        "agency": "Environmental Protection Agency",
+        "agencyShort": "EPA",
+        "budget": "$5.35M",
+        "budgetChange": "0.0%",
+        "qtrExpenditure": "$1.23M",
+        "qtrChange": "-10.0%",
+        "ytdExpenditure": "$2.70M",
+        "ytdChange": "+7.92%",
+        "proposals": "35",
+        "successRate": "15%",
+        "fee": "0.3%",
+        "overview": {
+            "description": "This program funds research on innovative approaches to mitigate climate change impacts, including carbon sequestration, emission reduction strategies, and climate resilience planning.",
+            "focusAreas": ["Carbon capture", "Climate-smart agriculture", "Urban heat island mitigation", "Coastal resilience"],
+            "keyDates": {
+                "applicationOpen": "2023-01-30",
+                "applicationClose": "2023-04-15",
+                "awardAnnouncement": "2023-07-01",
+                "projectStart": "2023-09-01"
+            },
+            "duration": "2-3 years",
+            "contact": "Dr. Robert Kim, rkim@epa.gov"
+        },
+        "requirements": {
+            "eligibility": ["State/local governments", "Tribal nations", "Non-profits", "Academic institutions"],
+            "ineligible": ["Federal agencies", "International organizations"],
+            "matchingFunds": "10% required for all applicants",
+            "documentation": ["Research plan", "Community impact statement", "Stakeholder engagement plan", "Evaluation framework"],
+            "specialRequirements": ["Community partnership requirement", "Policy relevance statement"]
+        }
+    }
+]
