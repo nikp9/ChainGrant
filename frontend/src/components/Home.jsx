@@ -1,6 +1,8 @@
 // Home.jsx
 import Header from "./Header.jsx";
+import ProjectPage from "./ProjectPage.jsx";
 import Table from "./Table.jsx";
+import ValidationForm from "./ValidationForm.jsx";
 
 function Home() {
     return (
@@ -13,7 +15,7 @@ function Home() {
             </div>
             
             {/* Table Section with different background */}
-            <div className="bg-[#141c2e] pb-10">
+            <div id="grants-table" className="bg-[#141c2e] pb-10">
                 <div className="max-w-7xl mx-auto px-4 py-6">
                     <Table />
                 </div>
