@@ -35,6 +35,23 @@ async function main(){
     }
 
     fs.writeFileSync("addresses.json", JSON.stringify(addresses, null, 2));
+
+    const Admin = await hre.ethers.deployContract("Admin");
+    await Admin.waitForDeployment();
+    console.log(`ProjectDetails deployed to ${Admin.target}`);
+
+    const Validator = await hre.ethers.deployContract("Validator", [Admin.target]);
+    await Validator.waitForDeployment();
+    console.log(`ProjectDetails deployed to ${Validator.target}`);
+
+    const Project = await hre.ethers.deployContract("Project", [Validator.target, Admin.target]);
+    await Project.waitForDeployment();
+    console.log(`ProjectDetails deployed to ${Project.target}`);
+
+    const Milestone = await hre.ethers.deployContract("Milestone", [Project.target, Validator.target]);
+    await Milestone.waitForDeployment();
+    console.log(`ProjectDetails deployed to ${Milestone.target}`);
+    
 }
 
 main().catch((error) => {
