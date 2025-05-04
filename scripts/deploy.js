@@ -8,21 +8,21 @@ async function main(){
     
     const Admin = await hre.ethers.deployContract("Admin");
     await Admin.waitForDeployment();
-    console.log(`ProjectDetails deployed to ${Admin.target}`);
+    console.log(`Admin deployed to ${Admin.target}`);
 
     const Validator = await hre.ethers.deployContract("Validator", [Admin.target]);
     await Validator.waitForDeployment();
-    console.log(`ProjectDetails deployed to ${Validator.target}`);
+    console.log(`Validator deployed to ${Validator.target}`);
 
     const Project = await hre.ethers.deployContract("Project", [Validator.target, Admin.target]);
     await Project.waitForDeployment();
-    console.log(`ProjectDetails deployed to ${Project.target}`);
+    console.log(`Project deployed to ${Project.target}`);
 
     const Milestone = await hre.ethers.deployContract("Milestone", [Project.target, Validator.target]);
     await Milestone.waitForDeployment();
-    console.log(`ProjectDetails deployed to ${Milestone.target}`);
+    console.log(`Milestone deployed to ${Milestone.target}`);
     
-    const accounts = await hre.ethers.deployContract("Accounts", [EntryPoint.target, ProjectDetails.target]);
+    const accounts = await hre.ethers.deployContract("Accounts", [EntryPoint.target, Project.target]);
     await accounts.waitForDeployment();
     console.log(`Accounts deployed to ${accounts.target}`);
     
@@ -44,7 +44,7 @@ async function main(){
         Accounts: accounts.target,
         Paymaster: paymaster.target,
         Admin: Admin.target,
-        Validator: Validator,
+        Validator: Validator.target,
         Project: Project.target,
         Milestone: Milestone.target
     }
