@@ -1,4 +1,4 @@
 # ChainGrant
 - Wallet Connect ✅
-- Application form 
+- Application form ✅
 - Validation form ✅
