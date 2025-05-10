@@ -64,25 +64,6 @@ The system architecture consists of smart contracts on a Layer-2 blockchain, a R
 
 ---
 
-## 🌍 Applications
-
-- 🎓 Research Grant Management (Govt. and Institutional)
-- 💼 Startup & Innovation Funding
-- 🌐 International Research Collaborations
-- 📚 Fellowship and Educational Grants
-- 🤝 Crowdfunding Research Projects
-
----
-
-## 🌱 Environmental Considerations
-
-ChainGrant is optimized for sustainability by:
-
-- Using **energy-efficient PoS Layer-2 blockchains**.
-- Writing **gas-optimized smart contracts** to minimize network usage.
-
----
-
 ## 🛠️ Tech Stack
 
 - **Blockchain**: PoS-based Layer-2 (e.g., Polygon, Optimism)
@@ -96,7 +77,6 @@ ChainGrant is optimized for sustainability by:
 
 This project is currently under development and testing on testnet, it has not been published or deployed. All components are being built with a focus on decentralization, security, and user accessibility.
 
----
 <!-- 
 ## 📜 License
 
