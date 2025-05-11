@@ -1,9 +1,5 @@
 # ChainGrant
 
-**A Blockchain-Based Transparent and Decentralized Research Grant Management System**
-
-## 🚀 Overview
-
 ChainGrant is a decentralized platform designed to revolutionize how research grants are proposed, reviewed, funded, and tracked. It addresses major inefficiencies in traditional grant systems by leveraging blockchain technology to ensure transparency, fairness, and automation.
 
 ---
@@ -27,7 +23,7 @@ ChainGrant provides a blockchain-based solution featuring:
 - 🔒 **Anonymous Project Submissions** — Removes bias by hiding identities until approval.
 - 🔗 **Immutable Ledger** — Every action is stored securely and transparently.
 - ⚙️ **Smart Contracts** — Automate milestone-based fund disbursements.
-- 🌐 **User-Friendly Design** — No crypto knowledge or wallet setup required.
+- 🌐 **User-Friendly Design** — No need to hold cryptocurrency to interact with the application.
 - 📊 **Transparent Scoring & Decisions** — All evaluations are publicly auditable.
 
 ---
