@@ -7,7 +7,8 @@ async function main() {
     const Accounts = await hre.ethers.getContractAt("Accounts", addresses["Accounts"]);
     const Paymaster = await hre.ethers.getContractAt("Paymaster", addresses["Paymaster"]);
     const ProjectDetails = await hre.ethers.getContractAt("ProjectDetails", addresses["ProjectDetails"]);
-
+    const Admin = await hre.ethers.getContractAt("Admin", addresses["Admin"]);
+    const Validator = await hre.ethers.getContractAt("Validator", addresses["Validator"]);
     // Get contract instances
     const [signer] = await hre.ethers.getSigners();
 
