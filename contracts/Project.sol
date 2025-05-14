@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.13;
+pragma solidity ^0.8.12;
 import "./interfaces/IAdmin.sol";
 import "./interfaces/IValidator.sol";
 import "./interfaces/IMilestone.sol";

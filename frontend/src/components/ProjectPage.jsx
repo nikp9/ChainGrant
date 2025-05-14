@@ -2,6 +2,9 @@ import { motion } from 'framer-motion';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import ValidationForm from './ValidationForm';
+import ResearchApplicationForm from './ResearchApplicationForm';
+import { useUser } from './UserContext';
+import { UserTypes } from './walletUtils';
 
 function ProjectPage() {
   const { id } = useParams();
@@ -9,6 +12,7 @@ function ProjectPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('overview');
+  const { userType } = useUser();
 
   useEffect(() => {
     const fetchProjectData = async () => {
@@ -158,7 +162,11 @@ function ProjectPage() {
       case 'form':
       return (
         <div className="p-6">
-          <ValidationForm/>
+          {userType === UserTypes.VALIDATOR ? (
+              <ValidationForm />
+            ) : (
+              <ResearchApplicationForm />
+            )}
         </div>
         );
       default:
