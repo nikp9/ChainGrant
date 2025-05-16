@@ -1,6 +1,16 @@
 const hre = require("hardhat");
 const fs = require("fs");
 
+/*
+TODO
+
+Deploy and test on:
+1. Hardhat local chain
+2. Fork of the main chain
+3. Sepolia Testnet
+
+*/
+
 async function main() {
     addresses = JSON.parse(fs.readFileSync("addresses.json", "utf-8"));
     const EntryPoint = await hre.ethers.getContractAt("EntryPoint", addresses["EntryPoint"]);
