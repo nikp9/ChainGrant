@@ -27,10 +27,10 @@ async function main() {
     console.log("Current nonce:", nonce);
 
     // Encoding the function to call
-    const targetFunction = ProjectDetails.interface.encodeFunctionData("addProjectDetails", [1]);
+    const targetFunction = Project.interface.encodeFunctionData("addProjectDetails", [1]);
 
     // Prepare the execute call
-    const functionCallData = Accounts.interface.encodeFunctionData("execute", [ProjectDetails.target, 0, targetFunction]);
+    const functionCallData = Accounts.interface.encodeFunctionData("execute", [Project.target, 0, targetFunction]);
     
     const userOp = {
         sender: Accounts.target,
@@ -70,7 +70,7 @@ async function main() {
         // console.log("Transaction Receipt:", receipt);
 
         // Verify the count was incremented
-        const update = await ProjectDetails.idToProjectDetails(1);
+        const update = await Project.idToProjectDetails(1);
         console.log("Response :", update);
     } catch (error) {
         console.error("Error executing UserOperation:");
