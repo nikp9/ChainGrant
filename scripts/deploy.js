@@ -32,7 +32,7 @@ async function main(){
     
     console.log("Creating paymaster stake in EntryPoint...");
     const depositTx = await EntryPoint.depositTo(paymaster, {
-        value: hre.ethers.parseEther("0.2")
+        value: hre.ethers.parseEther("0.5") // Stake ether in entrypoint
     });
     await depositTx.wait();
     const balance = await EntryPoint.balanceOf(paymaster);
