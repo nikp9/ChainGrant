@@ -27,7 +27,7 @@ async function main() {
     console.log("Current nonce:", nonce);
 
     // Encoding the function to call
-    const targetFunction = Project.interface.encodeFunctionData("addProjectDetails", [1]);
+    const targetFunction = Project.interface.encodeFunctionData("addProjectDetails", [10000, 2]);
 
     // Prepare the execute call
     const functionCallData = Accounts.interface.encodeFunctionData("execute", [Project.target, 0, targetFunction]);
