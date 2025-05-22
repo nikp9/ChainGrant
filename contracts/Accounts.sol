@@ -11,7 +11,7 @@ contract Accounts is IAccount{
 
     address public entryPoint;
     mapping (address => uint8) public users;
-    bytes4 private constant ADD_PROJECT_DETAILS_SELECTOR = bytes4(keccak256("addProjectDetails(uint256, uint256)"));
+    bytes4 private constant ADD_PROJECT_DETAILS_SELECTOR = bytes4(keccak256("addProjectDetails(uint256, uint256)")); // Error on function signature
     address immutable EXPECTED_ADDRESS;
 
     constructor(address _entryPoint, address _expectedAddress) {
