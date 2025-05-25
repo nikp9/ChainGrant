@@ -38,6 +38,8 @@ async function main(){
     const balance = await EntryPoint.balanceOf(paymaster);
     console.log("Paymaster stake in EntryPoint:", hre.ethers.formatEther(balance), "ETH");
 
+    await Admin.addResearch(2, 5, 3, 100000);
+
     
     const addresses = {
         EntryPoint: EntryPoint.target,

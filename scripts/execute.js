@@ -47,6 +47,9 @@ async function main() {
     };
 
     // console.log("UserOperation:", userOp);
+    const userOpHash = await EntryPoint.getUserOpHash(userOp);
+    const signature = await signer.signMessage(hre.ethers.getBytes(userOpHash));
+    userOp.signature = signature;
 
     try {
         // Estimate gas for the handleOps call
@@ -70,7 +73,7 @@ async function main() {
         // console.log("Transaction Receipt:", receipt);
 
         // Verify the count was incremented
-        const update = await Project.idToProjectDetails(1);
+        const update = await Project.projectOwnerToProjectDetails(Accounts.target);
         console.log("Response :", update);
     } catch (error) {
         console.error("Error executing UserOperation:");
