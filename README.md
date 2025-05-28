@@ -65,7 +65,6 @@ The system architecture consists of smart contracts on a Layer-2 blockchain, a R
 - **Blockchain**: PoS-based Layer-2 (e.g., Polygon, Optimism)
 - **Smart Contracts**: Solidity
 - **Frontend**: React.js
-- **Storage**: IPFS for off-chain proposal data and evaluations
 
 ---
 
