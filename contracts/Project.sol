@@ -155,8 +155,4 @@ contract Project {
         require(projectOwnerToProjectDetails[_projectOwner].status != 0, "Project does not exist");
         return projectOwnerToProjectDetails[_projectOwner].validatorScores;
     }
-
-    function getProjectsByResearchArea(uint256 researchArea) public view returns (address[] memory) {
-        return researchAreaToProjectOwners[researchArea];
-    }
 }

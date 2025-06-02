@@ -1,6 +1,6 @@
 const { expect } = require("chai");
 const { ethers } = require("hardhat");
-// Todo performance metrics for each function
+
 describe("Admin Contract View Functions", function () {
   let admin;
   let owner;
@@ -9,31 +9,6 @@ describe("Admin Contract View Functions", function () {
   
   // Consistent budget for testing
   const budget = 100;
-
-  const performanceMetrics = {
-    local: {},
-    sepolia: {}
-  };
-
-  // Helper function to measure execution time
-  const measureTime = async (fn, description, network) => {
-    const start = Date.now();
-    const result = await fn();
-    const end = Date.now();
-    const duration = end - start;
-    
-    if (!performanceMetrics[network][description]) {
-      performanceMetrics[network][description] = [];
-    }
-    performanceMetrics[network][description].push(duration);
-    
-    return result;
-  };
-
-  after(async function () {
-    console.log("\nPerformance Metrics:");
-    console.log(JSON.stringify(performanceMetrics, null, 2));
-  });
   
   beforeEach(async function () {
     // Deploy the Admin contract
@@ -49,12 +24,7 @@ describe("Admin Contract View Functions", function () {
 
   describe("getResearchMilestones View Function", function () {
     it("Should return correct number of milestones for existing research", async function () {
-      await measureTime(
-        () => admin.getResearchMilestones(101),
-        "getResearchMilestones",
-        "local"
-      );
-      // const milestones = await admin.getResearchMilestones(101);
+      const milestones = await admin.getResearchMilestones(101);
       expect(milestones).to.equal(5);
     });
 
