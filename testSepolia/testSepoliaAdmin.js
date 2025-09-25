@@ -68,8 +68,6 @@ describe("Admin Contract View Functions - Sepolia", function () {
     admin = await measureCall(admin.waitForDeployment(), "Admin.deploy()");
 
     console.log(`Admin contract deployed to ${await admin.getAddress()}`);
-
-    // Prepare test data with transaction waits
     await measureCall(admin.addResearch(101, 5, 1, budget), "addResearch");
     const tx2 = await admin.addResearch(102, 3, 1, budget);
     await tx2.wait();
