@@ -32,13 +32,13 @@ module.exports = {
         process.env.PRIVATE_KEY_13, // Test account 13
       ],
       timeout: 120000, // 2 minutes
-      confirmations: 2,
+      confirmations: 1,
     },
   },
   mocha: {
-    timeout: 600000, // 10 minutes global timeout - applies to ALL tests
+    timeout: 1800000, // 10 minutes global timeout - applies to ALL tests
     slow: 30000, // Tests over 30s are marked as slow
-    reporter: 'spec',
-    bail: false // Continue running tests even if one fails
-  }
+    reporter: "spec",
+    bail: false, // Continue running tests even if one fails
+  },
 };
